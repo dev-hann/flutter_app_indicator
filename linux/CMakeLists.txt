@@ -6,8 +6,13 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 # not be changed
 set(PLUGIN_NAME "flutter_app_indicator_plugin")
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules (APPINDICATOR REQUIRED IMPORTED_TARGET appindicator3-0.1)
+
+
 add_library(${PLUGIN_NAME} SHARED
   "flutter_app_indicator_plugin.cc"
+  "flutter_app_indicator.cc"
 )
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES
@@ -17,6 +22,8 @@ target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter)
 target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
+target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
+target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::APPINDICATOR)
 
 # List of absolute paths to libraries that should be bundled with the plugin
 set(flutter_app_indicator_bundled_libraries

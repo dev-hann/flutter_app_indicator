@@ -6,12 +6,21 @@
 
 #include <cstring>
 
+#include "flutter_app_indicator.h"
+
 #define FLUTTER_APP_INDICATOR_PLUGIN(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), flutter_app_indicator_plugin_get_type(), \
                               FlutterAppIndicatorPlugin))
 
+const static char init[]="init";
+const static char icon[]="icon";
+const static char label[]="label";
+const static char title[]="title";
+const static char menu[]="menu";
+
 struct _FlutterAppIndicatorPlugin {
   GObject parent_instance;
+  FlutterAppIndicator app_indicator;
 };
 
 G_DEFINE_TYPE(FlutterAppIndicatorPlugin, flutter_app_indicator_plugin, g_object_get_type())
@@ -23,15 +32,41 @@ static void flutter_app_indicator_plugin_handle_method_call(
   g_autoptr(FlMethodResponse) response = nullptr;
 
   const gchar* method = fl_method_call_get_name(method_call);
+  FlValue* args = fl_method_call_get_args(method_call);
 
-  if (strcmp(method, "getPlatformVersion") == 0) {
-    struct utsname uname_data = {};
-    uname(&uname_data);
-    g_autofree gchar *version = g_strdup_printf("Linux %s", uname_data.version);
-    g_autoptr(FlValue) result = fl_value_new_string(version);
-    response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-  } else {
-    response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+  if (strcmp(method, init) == 0) {
+    /// init
+    g_autoptr(FlValue) result = fl_value_new_bool(FALSE);
+    const gchar* title = nullptr;
+    const gchar* iconPath = nullptr;
+    const gchar* label = nullptr;
+   FlValue* titleValue = fl_value_lookup_string(args, "title");
+    if (titleValue && fl_value_get_type(titleValue) == FL_VALUE_TYPE_STRING) {
+      title = fl_value_get_string(titleValue);
+    }
+
+   FlValue* iconPathValue = fl_value_lookup_string(args, "iconPath");
+    if (iconPathValue && fl_value_get_type(iconPathValue) == FL_VALUE_TYPE_STRING) {
+      iconPath = fl_value_get_string(iconPathValue);
+    }
+   FlValue* labelValue = fl_value_lookup_string(args, "label");
+    if (labelValue && fl_value_get_type(labelValue) == FL_VALUE_TYPE_STRING) {
+      label= fl_value_get_string(labelValue);
+    }
+  // printf("SystemTray::create_indicator title: %s, iconPath: %s, toolTip: %s\n",
+         // title, iconPath, label);
+      result =fl_value_new_bool(self->app_indicator.init(title,iconPath,label));
+    response =FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+  } else if(strcmp(method,icon)==0){
+    /// change Icon
+  } else if(strcmp(method,label)==0){
+    /// change Label
+  } else if(strcmp(method,title)==0){
+    /// change title
+  } else if(strcmp(method,menu)==0){
+    ///
+  }else{
+    
   }
 
   fl_method_call_respond(method_call, response, nullptr);
@@ -45,7 +80,8 @@ static void flutter_app_indicator_plugin_class_init(FlutterAppIndicatorPluginCla
   G_OBJECT_CLASS(klass)->dispose = flutter_app_indicator_plugin_dispose;
 }
 
-static void flutter_app_indicator_plugin_init(FlutterAppIndicatorPlugin* self) {}
+static void flutter_app_indicator_plugin_init(FlutterAppIndicatorPlugin* self) {
+}
 
 static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
                            gpointer user_data) {
@@ -62,6 +98,9 @@ void flutter_app_indicator_plugin_register_with_registrar(FlPluginRegistrar* reg
       fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
                             "flutter_app_indicator",
                             FL_METHOD_CODEC(codec));
+plugin->app_indicator = FlutterAppIndicator();
+
+
   fl_method_channel_set_method_call_handler(channel, method_call_cb,
                                             g_object_ref(plugin),
                                             g_object_unref);
