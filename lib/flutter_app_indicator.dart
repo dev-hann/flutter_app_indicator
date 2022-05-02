@@ -27,8 +27,6 @@ class FlutterAppIndicator {
     required String label,
     required List menuList,
   }) async {
-    print(_fullPath(iconPath));
-    print(label);
     final _res = await _channel.invokeMethod(
       _initKey,
       {
@@ -38,12 +36,11 @@ class FlutterAppIndicator {
         'menuList': {},
       },
     );
-    print(_res);
   }
 
   Future setIcon(String iconPath) async {
     _channel.invokeMethod(_iconKey, {
-      'iconPath': iconPath,
+      'iconPath': _fullPath(iconPath),
     });
   }
 

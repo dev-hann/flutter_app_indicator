@@ -34,9 +34,9 @@ static void flutter_app_indicator_plugin_handle_method_call(
   const gchar* method = fl_method_call_get_name(method_call);
   FlValue* args = fl_method_call_get_args(method_call);
 
+  g_autoptr(FlValue) result = fl_value_new_bool(FALSE);
   if (strcmp(method, init) == 0) {
     /// init
-    g_autoptr(FlValue) result = fl_value_new_bool(FALSE);
     const gchar* title = nullptr;
     const gchar* iconPath = nullptr;
     const gchar* label = nullptr;
@@ -57,7 +57,7 @@ static void flutter_app_indicator_plugin_handle_method_call(
     response =FL_METHOD_RESPONSE(fl_method_success_response_new(result));
   } else if(strcmp(method,icon)==0){
     /// change Icon
-    const iconPath = nullptr;
+    const gchar* iconPath = nullptr;
     FlValue* pathValue = fl_value_lookup_string(args,"iconPath");
     if(pathValue && fl_value_get_type(pathValue)== FL_VALUE_TYPE_STRING){
       iconPath = fl_value_get_string(pathValue);
@@ -66,7 +66,7 @@ static void flutter_app_indicator_plugin_handle_method_call(
     response =FL_METHOD_RESPONSE(fl_method_success_response_new(result));
   } else if(strcmp(method,label)==0){
     /// change Label
-    const label = nullptr;
+    const gchar* label = nullptr;
     FlValue* labelValue = fl_value_lookup_string(args,"label");
     if(labelValue && fl_value_get_type(labelValue)== FL_VALUE_TYPE_STRING){
       label = fl_value_get_string(labelValue);
