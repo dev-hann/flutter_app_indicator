@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_app_indicator/flutter_app_indicator.dart';
@@ -15,6 +17,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final FlutterAppIndicator _indicator = FlutterAppIndicator();
+  Timer? _timer;
   @override
   void initState() {
     super.initState();
@@ -24,6 +27,22 @@ class _MyAppState extends State<MyApp> {
       iconPath: "assets/sleep.png",
       menuList: [],
     );
+    initTimer();
+  }
+
+  void initTimer() {
+    if (_timer != null && _timer!.isActive) {
+      _timer!.cancel();
+    }
+    _timer = Timer.periodic(Duration(seconds: 1), (_t) {
+      final s = _t.tick;
+      if (s.isOdd) {
+        _indicator.setIcon("assets/sleep.png");
+      } else {
+        _indicator.setIcon("assets/app_icon.png");
+      }
+      _indicator.setLabel("TestLabel$s");
+    });
   }
 
   @override
