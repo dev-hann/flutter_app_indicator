@@ -1,8 +1,12 @@
+library flutter_app_indicator;
+
 import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+
+part 'menu_item.dart';
 
 const _channelKey = 'flutter_app_indicator';
 
@@ -27,7 +31,7 @@ class FlutterAppIndicator {
     required String label,
     required List menuList,
   }) async {
-    final _res = await _channel.invokeMethod(
+    await _channel.invokeMethod(
       _initKey,
       {
         'title': title,

@@ -12,6 +12,7 @@ typedef void (*app_indicator_set_label_fn)(AppIndicator*,const gchar*, const gch
 
 typedef void (*app_indicator_set_icon_fn)(AppIndicator*,const gchar*,const gchar*);
 
+
 class FlutterAppIndicator{
  public:
   bool init(const char* title,const char* iconPath,const char* label);
@@ -21,6 +22,8 @@ class FlutterAppIndicator{
   bool set_label(const char* label,const char* guide);
   
   bool set_icon(const char* iconPath,const char* iconDesc);
+  
+  bool set_menu(GtkWidget* menu);
 
  protected:
   bool initApi();
@@ -31,7 +34,6 @@ class FlutterAppIndicator{
   app_indicator_set_menu_fn _app_indicator_set_menu =nullptr;
   app_indicator_set_label_fn _app_indicator_set_label=nullptr;
   app_indicator_set_icon_fn _app_indicator_set_icon=nullptr;
-
   AppIndicator* _app_indicator=nullptr;
 
 };

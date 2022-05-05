@@ -25,7 +25,16 @@ class _MyAppState extends State<MyApp> {
       title: "TestTitle",
       label: "TestLabel",
       iconPath: "assets/sleep.png",
-      menuList: [],
+      menuList: [
+        MenuItem("Hello", () {}),
+        MenuSeparator(),
+        MenuItemList("HelliList", [
+          MenuItem("Hello", () {}),
+          MenuItem("Hello", () {}),
+          MenuSeparator(),
+          MenuItem("Hello", () {}),
+        ])
+      ],
     );
     initTimer();
   }

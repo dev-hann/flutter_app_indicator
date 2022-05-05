@@ -4,7 +4,7 @@
 bool FlutterAppIndicator::init(const char* title,
     const char* iconPath,
     const char* label){
-  printf("show %s %s %s\n",title,iconPath,label);
+  bool ret =false;
   if(!initApi()){
     return false;
   }
@@ -13,8 +13,9 @@ bool FlutterAppIndicator::init(const char* title,
   _app_indicator_set_status(_app_indicator,APP_INDICATOR_STATUS_ACTIVE);
   set_label(label,label);
   _app_indicator_set_menu(_app_indicator,GTK_MENU(gtk_menu_new()));
+  ret = true;
   }while(false);
-  return true;
+  return ret;
 }
 
 bool FlutterAppIndicator::set_menu(GtkMenu* menu){
