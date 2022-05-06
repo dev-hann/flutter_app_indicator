@@ -17,8 +17,6 @@ class FlutterAppIndicator{
  public:
   bool init(const char* title,const char* iconPath,const char* label);
 
-  bool set_menu(GtkMenu*);
-
   bool set_label(const char* label,const char* guide);
   
   bool set_icon(const char* iconPath,const char* iconDesc);

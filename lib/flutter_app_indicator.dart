@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 
 part 'menu_item.dart';
+part 'menu_type.dart';
 
 const _channelKey = 'flutter_app_indicator';
 
@@ -29,7 +30,7 @@ class FlutterAppIndicator {
     required String title,
     required String iconPath,
     required String label,
-    required List menuList,
+    required List<MenuItemBase> menuList,
   }) async {
     await _channel.invokeMethod(
       _initKey,
@@ -37,7 +38,7 @@ class FlutterAppIndicator {
         'title': title,
         'iconPath': _fullPath(iconPath),
         'label': label,
-        'menuList': {},
+        'menuList': _itemList(menuList),
       },
     );
   }
@@ -60,10 +61,13 @@ class FlutterAppIndicator {
     });
   }
 
-  Future setMenu(List menuList) async {
-    _channel.invokeMethod(_menuKey, {'menuList': {}});
+  Future setMenu(List<MenuItemBase> menuList) async {
+    _channel.invokeMethod(
+        _menuKey, {'menuList': _itemList(menuList)});
   }
-
+  List<Map<String,dynamic>> _itemList(List<MenuItemBase> list){
+    return list.map((e)=> e.toMap()).toList();
+  }
   String _fullPath(String path) {
     return joinAll([
       dirname(Platform.resolvedExecutable),

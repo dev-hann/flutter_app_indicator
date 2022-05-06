@@ -15,8 +15,12 @@
 const static char init[]="init";
 const static char icon[]="icon";
 const static char label[]="label";
-const static char title[]="title";
 const static char menu[]="menu";
+const static char title[]="title";
+
+const static int64_t menu_item_type_index=1;
+const static int64_t menu_list_type_index=2;
+const static int64_t menu_divider_type_index=3;
 
 struct _FlutterAppIndicatorPlugin {
   GObject parent_instance;
@@ -25,6 +29,34 @@ struct _FlutterAppIndicatorPlugin {
 
 G_DEFINE_TYPE(FlutterAppIndicatorPlugin, flutter_app_indicator_plugin, g_object_get_type())
 
+static GtkWidget* menu_item(FlValue* args){
+    FlValue* type_value = fl_value_lookup_string(args,"typeIndex");
+    if(type_value==nullptr || fl_value_get_type(type_value)!=FL_VALUE_TYPE_STRING){
+      return nullptr;
+    }
+    GtkWidget* item = nullptr;
+
+    const int64_t index = fl_value_get_int(type_value);
+    if(index==menu_divider_type_index){
+      item = gtk_separator_menu_item_new();
+    }else if(index==menu_item_type_index){
+    }else if(index==menu_list_type_index){
+    }
+    return item;
+
+
+}
+static GtkWidget* fl_value_to_menu(FlValue* args){
+  GtkWidget* menu= gtk_menu_new();
+
+  for(size_t i=0;i<fl_value_get_length(args);++i){
+    GtkWidget* item = menu_item(fl_value_get_list_value(args,i));
+      if(item!=nullptr){
+        gtk_menu_shell_append(GTK_MENU_SHELL(menu),GTK_WIDGET(item)); 
+      }
+  }
+  return GTK_WIDGET(menu);
+}
 // Called when a method call is received from Flutter.
 static void flutter_app_indicator_plugin_handle_method_call(
     FlutterAppIndicatorPlugin* self,
@@ -83,13 +115,19 @@ static void flutter_app_indicator_plugin_handle_method_call(
       // result =fl_value_new_bool(self->app_indicator.set_title(label,"label"));
     // response =FL_METHOD_RESPONSE(fl_method_success_response_new(result));
   } else if(strcmp(method,menu)==0){
-    ///
+    /// set MenuList
+    GtkWidget* menu =fl_value_to_menu(args);
+    result = fl_value_new_bool(self->app_indicator.set_menu(menu));
+    response =FL_METHOD_RESPONSE(fl_method_success_response_new(result));
   }else{
     
   }
 
   fl_method_call_respond(method_call, response, nullptr);
 }
+
+
+
 
 static void flutter_app_indicator_plugin_dispose(GObject* object) {
   G_OBJECT_CLASS(flutter_app_indicator_plugin_parent_class)->dispose(object);

@@ -18,10 +18,12 @@ bool FlutterAppIndicator::init(const char* title,
   return ret;
 }
 
-bool FlutterAppIndicator::set_menu(GtkMenu* menu){
+bool FlutterAppIndicator::set_menu(GtkWidget* menu){
   bool ret=false;
   do{
-  _app_indicator_set_menu(_app_indicator,menu);
+
+    gtk_widget_show_all(menu);
+  _app_indicator_set_menu(_app_indicator,GTK_MENU(menu));
   ret=true;
   }while(false);
   return ret;
