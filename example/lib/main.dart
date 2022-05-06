@@ -35,12 +35,12 @@ class _MyAppState extends State<MyApp> {
         MenuItem("Hello1j", () {
           print("1");
         }),
-        MenuSeparator(),
+        MenuDivider(),
         MenuItemList("Hello", [
           MenuItem("Hello", () {
             print("12");
           }),
-          MenuSeparator(),
+          MenuDivider(),
           MenuItem("Hello", () {
             print('3333');
           }),

@@ -46,8 +46,8 @@ class MenuItemList extends MenuItemBase {
   }
 }
 
-class MenuSeparator extends MenuItemBase {
-  MenuSeparator()
+class MenuDivider extends MenuItemBase {
+  MenuDivider()
       : super(
           null,
           MenuType.divider.index,
