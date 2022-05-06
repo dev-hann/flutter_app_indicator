@@ -28,7 +28,17 @@ struct _FlutterAppIndicatorPlugin {
 };
 
 G_DEFINE_TYPE(FlutterAppIndicatorPlugin, flutter_app_indicator_plugin, g_object_get_type())
-
+static GtkWidget* menu_item(FlValue* args);
+static GtkWidget* fl_value_to_menu(FlValue* args){
+  GtkWidget* menu= gtk_menu_new();
+  for(size_t i=0;i<fl_value_get_length(args);++i){
+    GtkWidget* item = menu_item(fl_value_get_list_value(args,i));
+      if(item!=nullptr){
+        gtk_menu_shell_append(GTK_MENU_SHELL(menu),item);
+      }
+  }
+  return menu;
+}
 static GtkWidget* menu_item(FlValue* args){
     FlValue* type_value = fl_value_lookup_string(args,"typeIndex");
     if(type_value==nullptr 
@@ -45,18 +55,13 @@ static GtkWidget* menu_item(FlValue* args){
       const gchar* label =fl_value_get_string(label_value);
       item = gtk_menu_item_new_with_label(label);
     }else if(index==menu_list_type_index){
+      FlValue* label_value = fl_value_lookup_string(args, "name");
+      const gchar* label =fl_value_get_string(label_value);
+      item = gtk_menu_item_new_with_label(label);
+      GtkWidget* sub_menu= fl_value_to_menu(fl_value_lookup_string(args,"itemList"));
+      gtk_menu_item_set_submenu(GTK_MENU_ITEM(item),sub_menu);
     }
     return item;
-}
-static GtkWidget* fl_value_to_menu(FlValue* args){
-  GtkWidget* menu= gtk_menu_new();
-  for(size_t i=0;i<fl_value_get_length(args);++i){
-    GtkWidget* item = menu_item(fl_value_get_list_value(args,i));
-      if(item!=nullptr){
-        gtk_menu_shell_append(GTK_MENU_SHELL(menu),item);
-      }
-  }
-  return menu;
 }
 // Called when a method call is received from Flutter.
 static void flutter_app_indicator_plugin_handle_method_call(

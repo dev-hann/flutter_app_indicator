@@ -25,17 +25,20 @@ class _MyAppState extends State<MyApp> {
   }
 
   void init() async {
-    print("init Indicator");
     await _indicator.init(
       title: "TestTitle",
       label: "TestLabel",
       iconPath: "assets/sleep.png",
     );
-    print("init Menu");
     await _indicator.setMenu(
       [
         MenuItem("Hello1j", () {}),
         MenuSeparator(),
+        MenuItemList("Hello", [
+          MenuItem("Hello", () {}),
+          MenuSeparator(),
+          MenuItem("Hello", () {}),
+        ]),
         MenuItem("Hello2", () {}),
       ],
     );

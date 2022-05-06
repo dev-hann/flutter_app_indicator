@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 
 part 'menu_item.dart';
@@ -26,12 +27,24 @@ class FlutterAppIndicator {
 
   final MethodChannel _channel = const MethodChannel(_channelKey);
 
-  Future init({
+  bool _hasListener = false;
+
+  void _initChannelListener() {
+    if (_hasListener) return;
+    _channel.setMethodCallHandler((method) async {
+      final _method = method.method;
+      print(_method);
+    });
+    _hasListener = true;
+  }
+
+  Future<bool> init({
     required String title,
     required String iconPath,
     required String label,
   }) async {
-    final _res = await _channel.invokeMethod(
+    _initChannelListener();
+    return await _channel.invokeMethod(
       _initKey,
       {
         'title': title,
@@ -39,31 +52,47 @@ class FlutterAppIndicator {
         'label': label,
       },
     );
-    print(_res);
   }
 
-  Future setIcon(String iconPath) async {
-    _channel.invokeMethod(_iconKey, {
+  Future<bool> setIcon(String iconPath) async {
+    return await _channel.invokeMethod(_iconKey, {
       'iconPath': _fullPath(iconPath),
     });
   }
 
-  Future setLabel(String label) async {
-    final _res = await _channel.invokeMethod(_labelKey, {
+  Future<bool> setLabel(String label) async {
+    return await _channel.invokeMethod(_labelKey, {
       'label': label,
     });
-    return _res;
   }
 
-  Future setTitle(String title) async {
-    _channel.invokeMethod(_titleKey, {
+  Future<bool> setTitle(String title) async {
+    return await _channel.invokeMethod(_titleKey, {
       'title': title,
     });
   }
 
-  Future setMenu(List<MenuItemBase> menuList) async {
-    final _res = await _channel.invokeMethod(_menuKey, _itemList(menuList));
-    print(_res);
+  final Map<int, VoidCallback> _callbackMap = {};
+  Future<bool> setMenu(List<MenuItemBase> menuList) async {
+    _parseCallback(menuList);
+    return await _channel.invokeMethod(_menuKey, _itemList(menuList));
+  }
+
+  void _parseCallback(List<MenuItemBase> menuList) {
+    for (final item in menuList) {
+      switch (item.type) {
+        case MenuType.item:
+          final MenuItem _item = item as MenuItem;
+          _callbackMap[item.hashCode] = _item.onTap;
+          break;
+        case MenuType.list:
+          final MenuItemList _list = item as MenuItemList;
+          _parseCallback(_list.itemList);
+          break;
+        case MenuType.divider:
+          break;
+      }
+    }
   }
 
   List<Map<String, dynamic>> _itemList(List<MenuItemBase> list) {

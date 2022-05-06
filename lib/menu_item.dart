@@ -10,6 +10,7 @@ abstract class MenuItemBase {
     return {
       'name': name,
       'typeIndex': typeIndex,
+      'hashCode': hashCode,
     };
   }
 }
@@ -22,12 +23,12 @@ class MenuItem extends MenuItemBase {
 
   final Function() onTap;
 
-  @override
-  Map<String, dynamic> toMap() {
-    final _res = super.toMap();
-    // _res['onTap'] = onTap;
-    return _res;
-  }
+ // @override
+ // Map<String, dynamic> toMap() {
+ //   final _res = super.toMap();
+ //   _res['onTap'] = onTap();
+ //   return _res;
+ // }
 }
 
 class MenuItemList extends MenuItemBase {
@@ -36,6 +37,13 @@ class MenuItemList extends MenuItemBase {
     this.itemList,
   ) : super(name, MenuType.list.index);
   final List<MenuItemBase> itemList;
+
+  @override
+  Map<String, dynamic> toMap() {
+    final _res = super.toMap();
+    _res['itemList'] = itemList.map((e) => e.toMap()).toList();
+    return _res;
+  }
 }
 
 class MenuSeparator extends MenuItemBase {
