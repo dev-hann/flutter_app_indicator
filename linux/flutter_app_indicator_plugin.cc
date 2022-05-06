@@ -25,9 +25,24 @@ const static int64_t menu_divider_type_index=2;
 struct _FlutterAppIndicatorPlugin {
   GObject parent_instance;
   FlutterAppIndicator app_indicator;
+  FlMethodChannel* channel;
 };
 
 G_DEFINE_TYPE(FlutterAppIndicatorPlugin, flutter_app_indicator_plugin, g_object_get_type())
+  FlutterAppIndicatorPlugin* g_plugin = nullptr;
+  static void menu_callback(GtkMenuItem* item,gpointer user_data){
+
+    int64_t hash_code = GPOINTER_TO_INT(user_data);
+    g_autoptr(FlValue) result = fl_value_new_int(hash_code);
+    fl_method_channel_invoke_method(
+        g_plugin->channel,
+        "menuOnTap",
+        result,
+        nullptr,
+        nullptr,
+        nullptr);
+
+  }
 static GtkWidget* menu_item(FlValue* args);
 static GtkWidget* fl_value_to_menu(FlValue* args){
   GtkWidget* menu= gtk_menu_new();
@@ -54,6 +69,9 @@ static GtkWidget* menu_item(FlValue* args){
       FlValue* label_value = fl_value_lookup_string(args, "name");
       const gchar* label =fl_value_get_string(label_value);
       item = gtk_menu_item_new_with_label(label);
+      FlValue* hash_code = fl_value_lookup_string(args,"hashCode");
+      g_signal_connect(G_OBJECT(item),"activate",G_CALLBACK(menu_callback),
+          GINT_TO_POINTER(fl_value_get_int(hash_code)));
     }else if(index==menu_list_type_index){
       FlValue* label_value = fl_value_lookup_string(args, "name");
       const gchar* label =fl_value_get_string(label_value);
@@ -142,6 +160,7 @@ static void flutter_app_indicator_plugin_class_init(FlutterAppIndicatorPluginCla
 }
 
 static void flutter_app_indicator_plugin_init(FlutterAppIndicatorPlugin* self) {
+  g_plugin = self;
 }
 
 static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
@@ -160,7 +179,7 @@ void flutter_app_indicator_plugin_register_with_registrar(FlPluginRegistrar* reg
                             "flutter_app_indicator",
                             FL_METHOD_CODEC(codec));
 plugin->app_indicator = FlutterAppIndicator();
-
+plugin->channel=channel;
 
   fl_method_channel_set_method_call_handler(channel, method_call_cb,
                                             g_object_ref(plugin),

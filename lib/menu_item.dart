@@ -23,12 +23,12 @@ class MenuItem extends MenuItemBase {
 
   final Function() onTap;
 
- // @override
- // Map<String, dynamic> toMap() {
- //   final _res = super.toMap();
- //   _res['onTap'] = onTap();
- //   return _res;
- // }
+  // @override
+  // Map<String, dynamic> toMap() {
+  //   final _res = super.toMap();
+  //   _res['onTap'] = onTap();
+  //   return _res;
+  // }
 }
 
 class MenuItemList extends MenuItemBase {

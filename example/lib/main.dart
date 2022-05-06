@@ -32,14 +32,22 @@ class _MyAppState extends State<MyApp> {
     );
     await _indicator.setMenu(
       [
-        MenuItem("Hello1j", () {}),
+        MenuItem("Hello1j", () {
+          print("1");
+        }),
         MenuSeparator(),
         MenuItemList("Hello", [
-          MenuItem("Hello", () {}),
+          MenuItem("Hello", () {
+            print("12");
+          }),
           MenuSeparator(),
-          MenuItem("Hello", () {}),
+          MenuItem("Hello", () {
+            print('3333');
+          }),
         ]),
-        MenuItem("Hello2", () {}),
+        MenuItem("Hello2", () {
+          print("@#@#@#");
+        }),
       ],
     );
     initTimer();

@@ -31,9 +31,13 @@ class FlutterAppIndicator {
 
   void _initChannelListener() {
     if (_hasListener) return;
-    _channel.setMethodCallHandler((method) async {
-      final _method = method.method;
-      print(_method);
+    _channel.setMethodCallHandler((MethodCall method) async {
+      if (method.method == "menuOnTap") {
+        final hashCode = method.arguments as int;
+        if (_callbackMap.containsKey(hashCode)) {
+          _callbackMap[hashCode]!();
+        }
+      }
     });
     _hasListener = true;
   }
