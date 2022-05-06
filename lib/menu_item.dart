@@ -25,7 +25,7 @@ class MenuItem extends MenuItemBase {
   @override
   Map<String, dynamic> toMap() {
     final _res = super.toMap();
-    _res['onTap'] = onTap;
+    // _res['onTap'] = onTap;
     return _res;
   }
 }

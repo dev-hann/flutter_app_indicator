@@ -30,17 +30,16 @@ class FlutterAppIndicator {
     required String title,
     required String iconPath,
     required String label,
-    required List<MenuItemBase> menuList,
   }) async {
-    await _channel.invokeMethod(
+    final _res = await _channel.invokeMethod(
       _initKey,
       {
         'title': title,
         'iconPath': _fullPath(iconPath),
         'label': label,
-        'menuList': _itemList(menuList),
       },
     );
+    print(_res);
   }
 
   Future setIcon(String iconPath) async {
@@ -50,9 +49,10 @@ class FlutterAppIndicator {
   }
 
   Future setLabel(String label) async {
-    _channel.invokeMethod(_labelKey, {
+    final _res = await _channel.invokeMethod(_labelKey, {
       'label': label,
     });
+    return _res;
   }
 
   Future setTitle(String title) async {
@@ -62,12 +62,14 @@ class FlutterAppIndicator {
   }
 
   Future setMenu(List<MenuItemBase> menuList) async {
-    _channel.invokeMethod(
-        _menuKey, {'menuList': _itemList(menuList)});
+    final _res = await _channel.invokeMethod(_menuKey, _itemList(menuList));
+    print(_res);
   }
-  List<Map<String,dynamic>> _itemList(List<MenuItemBase> list){
-    return list.map((e)=> e.toMap()).toList();
+
+  List<Map<String, dynamic>> _itemList(List<MenuItemBase> list) {
+    return list.map((e) => e.toMap()).toList();
   }
+
   String _fullPath(String path) {
     return joinAll([
       dirname(Platform.resolvedExecutable),

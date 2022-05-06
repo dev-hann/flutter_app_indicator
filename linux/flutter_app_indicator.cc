@@ -12,7 +12,6 @@ bool FlutterAppIndicator::init(const char* title,
   _app_indicator = _app_indicator_new(title,iconPath,APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
   _app_indicator_set_status(_app_indicator,APP_INDICATOR_STATUS_ACTIVE);
   set_label(label,label);
-  _app_indicator_set_menu(_app_indicator,GTK_MENU(gtk_menu_new()));
   ret = true;
   }while(false);
   return ret;
@@ -21,8 +20,7 @@ bool FlutterAppIndicator::init(const char* title,
 bool FlutterAppIndicator::set_menu(GtkWidget* menu){
   bool ret=false;
   do{
-
-    gtk_widget_show_all(menu);
+  gtk_widget_show_all(menu);
   _app_indicator_set_menu(_app_indicator,GTK_MENU(menu));
   ret=true;
   }while(false);
@@ -55,12 +53,9 @@ bool FlutterAppIndicator::initApi(){
     return false;
     }
   _app_indicator_new = reinterpret_cast<app_inicator_new_fn>(dlsym(handle,"app_indicator_new"));
-
   _app_indicator_set_status=reinterpret_cast<app_indicator_set_status_fn>(dlsym(handle,"app_indicator_set_status"));
   _app_indicator_set_menu=reinterpret_cast<app_indicator_set_menu_fn>(dlsym(handle,"app_indicator_set_menu"));
-
   _app_indicator_set_label=reinterpret_cast<app_indicator_set_label_fn>(dlsym(handle,"app_indicator_set_label"));
-  
   _app_indicator_set_icon=reinterpret_cast<app_indicator_set_icon_fn>(dlsym(handle,"app_indicator_set_icon_full"));
   if(!_app_indicator_new || !_app_indicator_set_status ||!_app_indicator_set_menu){
     return false;

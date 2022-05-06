@@ -21,19 +21,22 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _indicator.init(
+    init();
+  }
+
+  void init() async {
+    print("init Indicator");
+    await _indicator.init(
       title: "TestTitle",
       label: "TestLabel",
       iconPath: "assets/sleep.png",
-      menuList: [
-        MenuItem("Hello", () {}),
+    );
+    print("init Menu");
+    await _indicator.setMenu(
+      [
+        MenuItem("Hello1j", () {}),
         MenuSeparator(),
-        MenuItemList("HelliList", [
-          MenuItem("Hello", () {}),
-          MenuItem("Hello", () {}),
-          MenuSeparator(),
-          MenuItem("Hello", () {}),
-        ])
+        MenuItem("Hello2", () {}),
       ],
     );
     initTimer();
